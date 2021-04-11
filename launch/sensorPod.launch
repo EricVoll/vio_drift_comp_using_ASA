@@ -1,0 +1,37 @@
+<launch>
+	<!--<include file="$(find asa_ros)/launch/asa_ros.launch" unless="$(arg mock_asa)"/>-->
+    
+    <!--Conditional node starter arguments-->
+    <arg name="use_sim_time" default="false"/>
+
+    <arg name="start_rovio" default="true"/>
+    <arg name="start_file_server" default="false"/>
+    <arg name="start_rosbridge" default="false"/>
+    <arg name="start_versavis" default="false"/>
+    <arg name="start_asa" default="false"/>
+    <arg name="start_vicon" default="false"/>
+    <arg name="rectify_img" default="true"/> <!--if this is false, you'll have to change the asa_ros launch file-->
+    <arg name="output" default="screen"/>
+    <arg name="fuse_vicon" default="false"/>
+
+    <param name="use_sim_time" value="true" if="$(arg use_sim_time)"/>
+    
+        
+    <!--Start the rosbridge to communicate with RosSharp-->    
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" if="$(arg start_rosbridge)" />
+    <!--Start the rosbridge to import robot models to unity-->    
+	<node name="file_server" pkg="file_server" type="file_server" output="$(arg output)" if="$(arg start_file_server)" />
+    
+    <include file="$(find mr-drone)/launch/image_preprocessing.launch" if="$(arg rectify_img)" />
+
+    <include file="$(find mr-drone)/launch/versavis.launch" if="$(arg start_versavis)" />
+    <include file="$(find mr-drone)/launch/rovio.launch"  if="$(arg start_rovio)">
+        <arg name="output" value="$(arg output)"/>
+    </include>
+    <include file="$(find mr-drone)/launch/asa_ros.launch" if="$(arg start_asa)">
+        <arg name="print_status" value="true"/>
+    </include>
+
+    <node name="vicon_fuser" pkg="mr-drone" type="vicon_fuser.py" if="$(arg fuse_vicon)"/>
+
+</launch>

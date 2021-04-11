@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<launch>
+
+    <!--Arguments-->
+
+    <arg name="mav_name" default="drone" />
+    <arg name="camera_name" default="versavis/cam0" />
+    <arg name="global_frame_id" default="map" />
+    <arg name="local_frame_id" default="odom" />
+    <arg name="pose_update_topic" value="pose" /> <!-- piksi_node/enu_transform_fix or piksi/position_receiver_0/ros/transform_enu -->
+    <arg name="output" default="log"/>
+    
+    <!--<group ns="$(arg mav_name)">  -->
+        <node name="rovio" pkg="rovio" type="rovio_node" output="$(arg output)" clear_params="true">
+            <param name="filter_config" value="$(find mr-drone)/cfg/rovio.info" />
+            <param name="camera0_config" value="$(find mr-drone)/cfg/cam0.yaml" />
+            <remap from="cam0/image_raw" to="$(arg camera_name)/image_raw" />
+
+            <remap from="imu0" to="versavis/imu" />
+            <!--<param name="map_frame" value="$(arg global_frame_id)" />
+            <param name="world_frame" value="$(arg local_frame_id)"/>-->
+            <param name="capability_group" value="Core" />
+        </node>
+    <!--</group>-->
+    
+</launch>

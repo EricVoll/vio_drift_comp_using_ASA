@@ -1,0 +1,31 @@
+<launch>
+
+    <!-- Using an existing spatial anchor over and over again, imporves its quality and should improve the performance -->
+    <arg name="anchor_id_preset" default=""/>
+    <arg name="compensate_position" default="true"/>
+    <arg name="compensate_rotation" default="false"/>
+    <arg name="covariance_mode" default="empirical"/> <!-- {empiric, 'float'} (write a number instead of "float", then the number is used asa eye*float for the cov) -->
+    <arg name="manage_asa_node" default="false"/> <!-- Boolean. If true, this node will spin up and kill asa_node as needed -->
+    <arg name="use_alternative_facts" default="false"/>
+    <arg name="smooth_alternative_facts" default="false"/>
+    <arg name="interpolate_alt" default="false"/>
+    <arg name="output" default="log"/>
+    <arg name="send_update" default="0"/> <!--0 no updates to rovio, 1 send update alt constantly, 2 send when anchors are found $(arg output)-->
+    <arg name="mutliple_anchors" default="false"/>
+    <arg name="multiple_anchors_mode" default="0"/>
+
+    <node pkg="mr-drone" name="drift_compensator" type="drift_compensator.py" output="log">
+        <param name="anchor_id_preset" value="$(arg anchor_id_preset)"/>
+        <param name="compensate_position" value="$(arg compensate_position)"/>
+        <param name="compensate_rotation" value="$(arg compensate_rotation)"/>
+        <param name="covariance_mode" value="$(arg covariance_mode)"/>
+        <param name="manage_asa_node" value="$(arg manage_asa_node)"/>
+        <param name="use_alternative_facts" value="$(arg use_alternative_facts)"/>
+        <param name="smooth_alternative_facts" value="$(arg smooth_alternative_facts)"/>
+        <param name="interpolate_alt" value="$(arg interpolate_alt)"/>
+        <param name="send_update" value="$(arg send_update)"/>
+        <param name="multiple_anchors" value="$(arg mutliple_anchors)"/>
+        <param name="multiple_anchors_mode" value="$(arg multiple_anchors_mode)"/>
+    </node>
+     
+</launch>

@@ -1,0 +1,72 @@
+# General config
+rosbag_folder: /home/eric/rosbags/hololens/             # The folder were all rosbags are located. The will put this string in front of the named rosbags below
+
+# Test execution:
+run_tests:       0                                      # 1: Runs the tests, 0: skips the tests
+evaluate_error:  0                                      # 1: Evalutes the error, 0: skips this step
+analyze_results: 1                                      # 1: Calls the analyzer on the active runs, 0: skips this step
+# global rosbag list override
+rosbags: [bag11.bag, bag10.bag]                         #overwrite the rosbag setting for all configurations if this list is empty, the rosbag lists from each run will be used
+# set indices or skip/count
+indices: [0,1,2,4,5]
+# or
+skip:            0                                      # number of configs to skip
+count:           0                                      # number of configs to execute from skip on. Ignored if 0
+
+configs:
+
+  - #0 Runs the normal asa supported drift compensator but does not send updates to rovio. It tracks the alternative frame and normal imu
+      description: default
+      rosbags: []
+      launchfiles:
+        - "mr-drone sensorPod.launch rectify_img:=false"
+        - "mr-drone precision_tracker.launch broadcast_groundtruth:=true"
+  - #1 Placeholder for the first test, such that the analytics runs also use the data
+      description: asa_{alt}
+      rosbags: []
+      launchfiles:
+        - "mr-drone sensorPod.launch"
+        - "mr-drone drift_compensator.launch manage_asa_node:=true" 
+        - "mr-drone precision_tracker.launch broadcast_groundtruth:=true estimate_frame:=imu_alt"
+  - #2 runs rovio with imu_alt tracked with an anchor that was created using vicon groundtruth
+      description: asa_{alt~HL}
+      rosbags: []
+      launchfiles:
+        - "mr-drone sensorPod.launch"
+        - "mr-drone drift_compensator.launch manage_asa_node:=true anchor_id_preset:=348d2057-4984-4eff-8dad-4deff362574b" # This anchor was created with vicon's camera pose and queried >44 times without pose error.
+        - "mr-drone precision_tracker.launch broadcast_groundtruth:=true estimate_frame:=imu_alt"
+
+  - #3 Fuses Vicon data groundtruth to rovio and can be viewed as the best thing we can ever achieve
+      description: vicon_{fuse}
+      rosbags: []
+      launchfiles:
+        - "mr-drone sensorPod.launch fuse_vicon:=true rectify_img:=false"
+        - "mr-drone precision_tracker.launch broadcast_groundtruth:=true"
+  - #4 imu_alt mode with multiple anchors
+      description: asa_{multiple~alt}
+      rosbags: []
+      launchfiles:
+        - "mr-drone sensorPod.launch"
+        - "mr-drone drift_compensator.launch mutliple_anchors:=true manage_asa_node:=true"
+        - "mr-drone precision_tracker.launch broadcast_groundtruth:=true estimate_frame:=imu_alt"
+  - #5 imu_alt mode with multiple anchors
+      description: asa_{multiple~alt~HL}
+      rosbags: []
+      launchfiles:
+        - "mr-drone sensorPod.launch"
+        - "mr-drone drift_compensator.launch mutliple_anchors:=true manage_asa_node:=true anchor_id_preset:=348d2057-4984-4eff-8dad-4deff362574b"
+        - "mr-drone precision_tracker.launch broadcast_groundtruth:=true estimate_frame:=imu_alt"
+  
+  
+
+# Trajectory analysis
+shorten_trajectory_by_seconds: 5 # Clip away this number of seconds at the end of the trajectory before analysing
+trajectory_alignment_method: 'se3' # {sim3, se3, posyaw, none} The trajectory alingment transformation applied
+trajectory_alignment_num: '1'    # if -1 it uses all frames to aling the trajecotries. otherwise only the number of frames entered
+
+# Enter the path where the default precision tracker stores the csv data
+results_base_folder: /home/user/statistics/
+
+# Debugging stuff
+output: 'log' # {log, screen} (launch files have to support the argument, which is added to every launchfile)
+max_run_dur: 0 # maximum run duration. If 0 it is ignored.

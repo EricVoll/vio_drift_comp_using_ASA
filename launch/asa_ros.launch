@@ -1,0 +1,57 @@
+<launch>
+  <!-- Account credentials for Azure Spatial Anchors account. -->
+  <arg name="account_id" default="" />
+  <arg name="account_key" default="" />
+  <arg name="account_domain" default=""  />
+
+  <!-- ID of the anchor to search for on start-up. Can be comma-separated list. -->
+  <arg name="anchor_id" default="" />
+
+  <!-- Frame ID to use for found anchors. If set to blank, the UUID of the anchor will be used. -->
+  <arg name="anchor_frame_id" default="" />
+
+  <!-- Whether to print verbose status updated on every ingested frame. Very spammy. -->
+  <arg name="print_status" default="false" />
+
+  <!-- Use approximate time synchronization between the image and camera_info topic-->
+  <arg name="use_approx_sync_policy" default="true"/>
+
+  <!-- Que size of the image and camera_info subscriber -->
+  <arg name="subscriber_queue_size" default="10"/>
+  
+  <arg name="activate_interface_level_logging" default="false"/>
+  <arg name="should_not_synch_msgs" default="false"/>
+
+  <arg name="image_topic" default="/versavis/cam0/image_rect"/>
+  <arg name="info_topic" default="/versavis/cam0/synched/camera_info"/>
+
+  <arg name="camera_frame" default="camera0"/>
+  <arg name="node_name" default="asa_ros"/>
+
+  <node name="$(arg node_name)" type="asa_ros_node" pkg="asa_ros" clear_params="true" output="screen">
+    <remap from="image" to="$(arg image_topic)" />
+    <remap from="camera_info" to="$(arg info_topic)" />
+
+    <!-- The frame ID of your world/odometry frame. Should be static relative to, well, the world. -->
+    <param name="world_frame_id" value="map" />
+    <!-- Optical frame of the camera, z facing "forward" (out of the camera frame). -->
+    <!-- We do not have to set this parameter, if the camera info topic contains the correct tf frame name-->
+    <param name="camera_frame_id" value="$(arg camera_frame)" />
+    <!-- Timeout to wait for TF lookups to finish. If you get a lot of TF errors but still smome valid lookups, try increasing this. -->
+    <param name="tf_lookup_timeout" value="0.5" />
+
+    <param name="account_id" value="$(arg account_id)"/>
+    <param name="account_key" value="$(arg account_key)"/>
+    <param name="account_domain" value="$(arg account_domain)" />
+
+    <param name="anchor_frame_id" value="$(arg anchor_frame_id)" />
+
+    <param name="print_status" value="$(arg print_status)" />
+    <param name="use_approx_sync_policy" value="$(arg use_approx_sync_policy)"/>
+    <param name="subscriber_queue_size" value="$(arg subscriber_queue_size)"/>
+    <param name="activate_interface_level_logging" value="$(arg activate_interface_level_logging)"/>
+    <param name="should_not_synch_msgs" value="$(arg should_not_synch_msgs)"/>
+
+    <param name="anchor_id" value="$(arg anchor_id)" />
+  </node>
+</launch>

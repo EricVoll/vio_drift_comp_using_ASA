@@ -1,0 +1,14 @@
+<launch>
+
+   <param name="use_sim_time" value="true"/>
+
+   <node name="precision_sensor" pkg="mr-drone" output="screen" type="anchor_precision_sensor.py">
+    <param name="result_folder" value="/home/eric/statistics_asa/"/>
+   </node>
+   <include file="$(find mr-drone)/launch/image_preprocessing.launch" />
+
+   <!--<node pkg="rosbag" type="play" name="player" output="screen" 
+    args="  clock /home/eric/rosbags/mrdrone2/rosbags2/bag3.bag"/>
+-->
+
+</launch>

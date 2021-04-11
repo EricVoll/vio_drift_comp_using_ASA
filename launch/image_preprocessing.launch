@@ -1,0 +1,23 @@
+<launch>
+    <arg name="cam_name" default="/versavis/cam0/"/>
+
+    <node name="synchronizer" pkg="mr-drone" type="synchronizer.py" output="screen">
+        <param name="topic_base" value="$(arg cam_name)"/>
+        <param name="camera_info" value="camera_info"/>
+        <param name="image" value="image_raw"/>
+    </node>
+
+    <node name="image_undistort_node" pkg="image_undistort" type="image_undistort_node" output="screen" clear_params="true">
+        <param name="scale" value="1.0"/>
+        <param name="publish_tf" value="false"/>
+
+        <param name="output_frame" value="camera0"/>
+        <param name="output_camera_info_source" value="match_input" />
+
+        <remap from="input/image" to="$(arg cam_name)synched/image_raw"/>
+        <remap from="input/camera_info" to="$(arg cam_name)synched/camera_info"/>
+
+        <remap from="output/image" to="$(arg cam_name)/image_rect"/>
+        <remap from="output/camera_info" to="$(arg cam_name)/camera_info_rect"/>
+    </node>
+</launch>

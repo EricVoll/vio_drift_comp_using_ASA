@@ -1,0 +1,23 @@
+<launch>
+        
+        <arg name="node_name" default="precision_tracker"/>
+        <arg name="run_name" default=""/>
+        <arg name="run_duration" default="107"/>
+        <arg name="groundtruth_frame" default="fox"/>
+        <arg name="estimate_frame" default="imu"/>
+        <arg name="static_frame" default="map"/>
+        
+        <arg name="groundtruth_topic" default="/fox/vrpn_client/estimated_transform"/>
+        <arg name="broadcast_groundtruth" default="false"/>
+        <arg name="output" default="log"/>
+        	
+        <node pkg="mr-drone" name="$(arg node_name)" type="precision_tracker_2.py" output="screen">
+                <param name="run_name" value="$(arg run_name)"/>
+                <param name="run_duration" value="$(arg run_duration)"/>
+                <param name="groundtruth_frame" value="$(arg groundtruth_frame)"/>
+                <param name="estimate_frame" value="$(arg estimate_frame)"/>
+                <param name="static_frame" value="$(arg static_frame)"/>
+                <param name="groundtruth_topic" value="$(arg groundtruth_topic)"/>
+                <param name="broadcast_groundtruth" value="$(arg broadcast_groundtruth)"/>
+        </node>    
+</launch>

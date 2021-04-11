@@ -1,0 +1,56 @@
+<launch>
+	<!--<include file="$(find asa_ros)/launch/asa_ros.launch" unless="$(arg mock_asa)"/>-->
+    
+    <!--Conditional node starter arguments-->
+	<arg name="mock_asa" default="false" />
+    <arg name="start_file_server" default="false"/>
+    <arg name="start_position_controller" default="true"/>
+
+    <!--MAV arguments-->
+    <arg name="mav_name" default="firefly"/>
+    <arg name="world_name" default="basic"/>
+    <arg name="enable_logging" default="false"/>
+    <arg name="enable_ground_truth" default="true"/>
+    <arg name="log_file" default="$(arg mav_name)"/>
+    <arg name="debug" default="false"/>
+    <arg name="gui" default="true"/>
+    <arg name="paused" default="false"/>
+    <arg name="verbose" default="false"/>
+        
+    <!--Start the rosbridge to communicate with RosSharp-->    
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+    <!--Start the rosbridge to import robot models to unity-->    
+	<node name="file_server" pkg="file_server" type="file_server" output="screen" if="$(arg start_file_server)" />
+    
+    <!--Start the default firefly simulator (starts in its own namespace)-->
+    <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find rotors_gazebo)/models"/>
+    <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find rotors_gazebo)/models"/>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world"/>
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="paused" value="$(arg paused)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="verbose" value="$(arg verbose)"/>
+    </include>
+
+    <group ns="$(arg mav_name)">
+        <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+        <arg name="mav_name" value="$(arg mav_name)" />
+        <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
+        <arg name="enable_logging" value="$(arg enable_logging)" />
+        <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+        <arg name="log_file" value="$(arg log_file)"/>
+        </include>
+    </group>
+
+    <group ns="$(arg mav_name)">
+        <!-- Required for position controll commands on the command/trajectory topic-->
+        <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen" if="$(arg start_position_controller)">
+            <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+            <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+            <remap from="odometry" to="odometry_sensor1/odometry" />
+        </node>
+    </group>
+
+
+</launch>
