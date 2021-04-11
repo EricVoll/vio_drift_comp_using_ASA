@@ -14,7 +14,7 @@ This repo contains the ros packages written for my [semester project](https://gi
  sudo apt-get install ros-melodic-rosbridge-server
  cd ~/catkin_ws/src
  sudo apt-get install ros-$ROS_DISTRO-catkin ros-$ROS_DISTRO-tf2-eigen python-catkin-tools libgflags-dev libgoogle-glog-dev python-wstool
- git clone https://github.com/EricVoll/SemesterProjectRos mr-drone
+ git clone https://github.com/EricVoll/vio_drift_comp_using_ASA mr-drone
  git clone https://github.com/ethz-asl/rovio 
  cd rovio && git submodule update --init --recursive && cd ..
  git clone -b feature/poseupdate https://github.com/ethz-asl/rovio
