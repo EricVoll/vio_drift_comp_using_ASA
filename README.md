@@ -2,7 +2,7 @@
 
 This repo contains the ROS side code of my Semester Project at ETH's Autonomous Systems Lab (ASL), were I implemeneted VIO drift compensation using Azure Spatial Anchors for omnidirectional drones. The report with in-depth descriptions can be found here.
 
-The Mixed Reality side of this project is located [here](https://github.com/EricVoll/ethz_asl_semester_project) and you can find a video of it [here](https://youtu.be/HMKGFsD6Rc8).
+The Mixed Reality side of this project is located [here](https://github.com/EricVoll/ethz_asl_semester_project) and you can find a video of it [here](https://youtu.be/SxmkRreG5j8).
 
 # Setup
 1. Install ROS melodic
