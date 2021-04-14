@@ -109,6 +109,6 @@ If you close the node in terminal 3 it will save the arrays to the disk.
 You can then run `$ cd catkin_ws/src/mr-drone/src && python analyze_anchor_precision.py`, which will read this file and return a few stats.
 
 ## Reproducing VIO drift compensation performance results
-If valid config files exist, this should be as easy as doing: 
+If valid config files (/cfg/runs.yaml) exist, this should be as easy as doing: 
 `$ cd catkin_ws/src/mr-drone/src && python runner.py`
-
+The structure and available options of the yaml file are documented in the included yaml file as comments.
